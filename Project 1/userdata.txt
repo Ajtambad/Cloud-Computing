@@ -20,9 +20,9 @@ Content-Disposition: attachment; filename="userdata.txt"
 #!/bin/bash
 wget https://bootstrap.pypa.io/get-pip.py
 python3 ./get-pip.py
-sudo dnf install git-all
+sudo dnf -y install git-all
 git clone https://github.com/Ajtambad/Cloud-Computing.git
 cd 'Cloud-Computing/Project 1'
 git pull
-sudo python3 -m pip install requirements.txt
+sudo python3 -m pip install -r requirements.txt
 sudo gunicorn app:app --bind 0.0.0.0:80 --worker-class gevent --daemon
