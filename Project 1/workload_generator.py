@@ -19,7 +19,7 @@ from concurrent.futures import as_completed
 # args = parser.parse_args()
 
 num_request     = 1000
-url             = 'http://3.91.193.150:80/'
+url             = 'http://44.210.112.2:80/'
 image_folder    = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/face_images_1000/"
 prediction_file = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/Classification Results.csv"
 
