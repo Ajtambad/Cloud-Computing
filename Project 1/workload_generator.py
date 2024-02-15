@@ -18,8 +18,8 @@ from concurrent.futures import as_completed
 # parser.add_argument('--prediction_file', type=str, help='the path of the classification results file')
 # args = parser.parse_args()
 
-num_request     = 100
-url             = 'http://localhost:5000/'
+num_request     = 1000
+url             = 'http://3.91.193.150:80/'
 image_folder    = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/face_images_1000/"
 prediction_file = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/Classification Results.csv"
 
