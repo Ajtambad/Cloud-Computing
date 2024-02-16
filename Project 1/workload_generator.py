@@ -11,17 +11,22 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
 
-# parser = argparse.ArgumentParser(description='Upload images')
-# parser.add_argument('--num_request', type=int, help='one image per request')
-# parser.add_argument('--url', type=str, help='URL to the backend server, e.g. http://3.86.108.221/xxxx.php')
-# parser.add_argument('--image_folder', type=str, help='the path of the folder where images are saved on your local machine')
-# parser.add_argument('--prediction_file', type=str, help='the path of the classification results file')
-# args = parser.parse_args()
+parser = argparse.ArgumentParser(description='Upload images')
+parser.add_argument('--num_request', type=int, help='one image per request')
+parser.add_argument('--url', type=str, help='URL to the backend server, e.g. http://3.86.108.221/xxxx.php')
+parser.add_argument('--image_folder', type=str, help='the path of the folder where images are saved on your local machine')
+parser.add_argument('--prediction_file', type=str, help='the path of the classification results file')
+args = parser.parse_args()
 
-num_request     = 1000
-url             = 'http://44.210.112.2:80/'
-image_folder    = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/face_images_1000/"
-prediction_file = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/Classification Results.csv"
+num_request     = args.num_request
+url             = args.url
+image_folder    = args.image_folder
+prediction_file = args.prediction_file
+
+# num_request     = 100
+# url             = "http://52.91.203.189:80"
+# image_folder    = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/face_images_1000/"
+# prediction_file = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/Classification Results.csv"
 
 prediction_df   = pd.read_csv(prediction_file)
 responses       = 0
@@ -29,15 +34,15 @@ err_responses   = 0
 correct_predictions = 0
 wrong_predictions   = 0
 
-
 def send_one_request(image_path):
     global prediction_df, responses, err_responses, correct_predictions, wrong_predictions
     # Define http payload, "myfile" is the key of the http payload
     file = {"inputFile": open(image_path,'rb')}
     response = requests.post(url, files=file)
+
     # Print error message if failed
     if response.status_code != 200:
-        print('sendErr: '+r.url)
+        print('sendErr: '+response.url)
         err_responses +=1
     else :
         filename    = image_path.split('/')[-1]
@@ -78,4 +83,3 @@ while True:
         print ("++++++++++++++++++++++++++++++++++++")
         break
     time.sleep(1)
-#send_one_request('D:\\Amogh\\Docs\\ASU\\Assignments\\Cloud Computing\\Project 1\\face_images_1000\\test_000.jpg')
