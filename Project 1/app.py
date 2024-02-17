@@ -15,7 +15,7 @@ for ele in classRes.iterrows():
 
 
 @app.route("/", methods=["GET", "POST"])
-def test_file_upload():
+def file_upload():
     if request.method == "POST":
         form = request.files['inputFile']
         filename = form.filename.split('.')[0]
