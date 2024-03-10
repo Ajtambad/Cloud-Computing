@@ -20,9 +20,9 @@ def file_upload():
     if request.method=="POST":
         form = request.files['inputFile']
         filename = form.filename.split('.')[0]
-        ans_dict[filename] = classResDict[filename]
-        # return "{}:{}".format(filename, classResDict[filename])
-        requests.post('http://44.197.210.121:80', data=ans_dict)
+        # ans_dict[filename] = classResDict[filename]
+        return "{}:{}".format(filename, classResDict[filename])
+        # requests.post('http://44.197.210.121:80', data=ans_dict)
     else:
         return "Server is running"
 
