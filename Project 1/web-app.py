@@ -19,10 +19,11 @@ for ele in classRes.iterrows():
 def file_upload():
     if request.method == "POST":
         form = request.files['inputFile']
-        filename = form.filename.split('.')[0]
-        #file = {"inputFile":open(form, 'rb')}
-        # response = requests.post(url="54.242.102.215", files=file)
-        return "{}:{}".format(filename, classResDict[filename])
+        #filename = form.filename.split('.')[0]
+        file = {"inputFile":open(form, 'rb')}
+        response = requests.post(url="127.0.0.1", files=file)
+        return response
+        # return "{}:{}".format(filename, classResDict[filename])
     else:
         return "Server is running!"
     
