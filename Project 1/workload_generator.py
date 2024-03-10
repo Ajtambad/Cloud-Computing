@@ -24,7 +24,7 @@ image_folder    = args.image_folder
 prediction_file = args.prediction_file
 
 # num_request     = 100
-# url             = "http://52.91.203.189:80"
+# url             = "http://44.197.210.121:80"
 # image_folder    = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/face_images_1000/"
 # prediction_file = "D:/Amogh/Docs/ASU/Assignments/Cloud Computing/Project 1/Classification Results.csv"
 
