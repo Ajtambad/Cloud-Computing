@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, redirect
 import pandas as pd
 import warnings
 import requests
@@ -20,9 +20,8 @@ def file_upload():
     if request.method == "POST":
         form = request.files['inputFile']
         #filename = form.filename.split('.')[0]
-        file = {"inputFile":open(form, 'rb')}
-        response = requests.post(url="127.0.0.1", files=file)
-        return response
+        
+        return redirect("http://54.242.102.215:80", code=302)
         # return "{}:{}".format(filename, classResDict[filename])
     else:
         return "Server is running!"
