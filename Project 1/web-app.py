@@ -19,8 +19,8 @@ app = Flask(__name__)
 def file_upload():
     if request.method == "POST":
         form = request.files['inputFile']
-        filename = form.filename.split('.')[0]
-        file = {"inputFile":open(filename, 'rb')}
+        # filename = form.filename.split('.')[0]
+        file = {"inputFile":open(form, 'rb')}
         response = requests.post(url="54.242.102.215", files=file)
         # return "{}:{}".format(filename, classResDict[filename])
     else:
