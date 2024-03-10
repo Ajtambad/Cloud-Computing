@@ -7,6 +7,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 app = Flask(__name__)
 
 classResDict = {}
+ans_dict = {}
 
 classRes = pd.read_csv('Classification Results.csv')
 
@@ -19,7 +20,9 @@ def file_upload():
     if request.method=="POST":
         form = request.files['inputFile']
         filename = form.filename.split('.')[0]
-        return "{}:{}".format(filename, classResDict[filename])
+        ans_dict[filename] = classResDict[filename]
+        # return "{}:{}".format(filename, classResDict[filename])
+        requests.post('http://44.197.210.121:80', data=ans_dict)
     else:
         return "Server is running"
 

@@ -19,10 +19,10 @@ for ele in classRes.iterrows():
 def file_upload():
     if request.method == "POST":
         form = request.files['inputFile']
-        #filename = form.filename.split('.')[0]
-        
-        return redirect("http://54.242.102.215:80", code=302)
-        # return "{}:{}".format(filename, classResDict[filename])
+        filename = form.filename.split('.')[0]
+        redirect("http://54.242.102.215:80", code=302)
+        ans_dict = requests.get('http://54.242.102.215:80')
+        return "{}:{}".format(filename, ans_dict[filename])
     else:
         return "Server is running!"
     
