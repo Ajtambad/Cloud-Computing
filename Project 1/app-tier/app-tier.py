@@ -5,25 +5,44 @@ import requests
 import boto3
 
 sqs = boto3.client('sqs')
-queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
+
+req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
+resp_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-resp-queue'
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 app = Flask(__name__)
 
 
-# classResDict = {}
+classResDict = {}
 
-# classRes = pd.read_csv('Classification Results.csv')
+classRes = pd.read_csv('../Classification Results.csv')
 
-# for ele in classRes.iterrows():
-#     classResDict[ele[1][0]] = ele[1][1]
+for ele in classRes.iterrows():
+    classResDict[ele[1][0]] = ele[1][1]
 
-response = sqs.receive_message(
-    QueueUrl = queue_url,
-)
+while True:
 
-message = response['Messages'][0]
-receipt_handle = message['ReceiptHandle']
+    response = sqs.receive_message(
+    QueueUrl = req_queue_url,
+    VisibilityTimeout=15
+    )
+    if 'Messages' in response:
+        message = response['Messages'][0]
+        receipt_handle = message['ReceiptHandle']
+        filename = message['Body'].split('.')[0]
+        sqs.send_message(
+            QueueUrl=resp_queue_url,
+            MessageBody="{}:{}".format(filename, classResDict[filename])
+        )
+        # print(message['Body'])
+        sqs.delete_message(
+            QueueUrl=req_queue_url,
+            ReceiptHandle=receipt_handle
+        )
+    else:
+        print("Queue is empty")
+        break
+
 
 @app.route("/", methods=["GET", "POST"])
 def file_upload():
@@ -37,11 +56,6 @@ def file_upload():
     else:
         print(response)
         return "Server is running"
-
-sqs.delete_message(
-    QueueUrl=queue_url,
-    ReceiptHandle=receipt_handle
-)
 
 if __name__ == "__main__":
     app.run(debug=True)

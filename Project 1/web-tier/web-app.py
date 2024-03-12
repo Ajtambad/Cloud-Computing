@@ -5,24 +5,13 @@ import requests
 import boto3
 from botocore.config import Config
 
-my_config = Config(
-    region_name = 'rds.us-east-1.amazonaws.com'
-)
+sqs = boto3.client('sqs')
 
-sqs = boto3.client('sqs', config=my_config)
-
-queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
-
+req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
+resp_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-resp-queue'
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 app = Flask(__name__)
-
-# classResDict = {}
-
-# classRes = pd.read_csv('Classification Results.csv')
-
-# for ele in classRes.iterrows():
-#     classResDict[ele[1][0]] = ele[1][1]
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -31,12 +20,26 @@ def file_upload():
         form = request.files['inputFile']
         filename = form.filename
         response = sqs.send_message(
-            QueueUrl = queue_url,
+            QueueUrl = req_queue_url,
             MessageBody=filename
         )
-        # redirect('https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue', code=307)
-        # return "{}:{}".format(filename, ans_dict[filename])
-        return response
+        while True:
+
+            resp = sqs.receive_message(
+                QueueUrl=resp_queue_url,
+                VisibilityTimeout=15
+            )
+            if 'Messages' in resp:
+                message = resp['Messages'][0]
+                receipt_handle=resp['ReceiptHandle']
+                print(message)
+                sqs.delete_message(
+                    QueueUrl=resp_queue_url,
+                    ReceiptHandle=receipt_handle
+                )
+            else:
+                print("Queue is empty")  
+
     else:
         return "Server is running!"
     
