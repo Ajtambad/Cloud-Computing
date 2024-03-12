@@ -3,8 +3,14 @@ import pandas as pd
 import warnings
 import requests
 import boto3
+from botocore.config import Config
 
-sqs = boto3.client('sqs')
+my_config = Config(
+    region_name = 'us_west_1'
+)
+
+sqs = boto3.client('sqs', config=my_config)
+
 queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
 
 
