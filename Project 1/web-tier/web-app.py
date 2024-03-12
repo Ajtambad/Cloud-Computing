@@ -6,7 +6,7 @@ import boto3
 from botocore.config import Config
 
 my_config = Config(
-    region_name = 'us_west_1'
+    region_name = 'us_east_1'
 )
 
 sqs = boto3.client('sqs', config=my_config)
