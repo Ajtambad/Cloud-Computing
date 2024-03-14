@@ -10,8 +10,8 @@ import subprocess
 # credentials = session.get_credentials()
 # current_creds = credentials.get_frozen_credentials()
 
-sqs = boto3.client('sqs', region_name='us-east-1', aws_access_key_id=current_creds.access_key, aws_secret_access_key=current_creds.secret_key)
-s3 = boto3.client('s3', region_name='us-east-1', aws_access_key_id=current_creds.access_key, aws_secret_access_key=current_creds.secret_key)
+sqs = boto3.client('sqs', region_name='us-east-1')
+s3 = boto3.client('s3', region_name='us-east-1')
 
 req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
 resp_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-resp-queue'
