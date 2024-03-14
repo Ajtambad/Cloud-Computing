@@ -40,6 +40,7 @@ def file_upload():
                 message = resp['Messages'][0]
                 receipt_handle=message['ReceiptHandle']
                 prediction = message['Body']
+                print(prediction)
                 sqs.delete_message(
                     QueueUrl=resp_queue_url,
                     ReceiptHandle=receipt_handle
