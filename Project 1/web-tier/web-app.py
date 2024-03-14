@@ -44,7 +44,7 @@ def file_upload():
                     QueueUrl=resp_queue_url,
                     ReceiptHandle=receipt_handle
                     )
-                return message['Body']
+                return "message['Body']"
             else:
                 break
         return  
