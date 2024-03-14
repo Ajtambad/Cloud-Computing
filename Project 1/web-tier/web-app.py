@@ -22,7 +22,6 @@ def file_upload():
     if request.method == "POST":
         form = request.files.get('inputFile')
         filename = form.filename
-        print(filename)
         file_content = form.read()
         s3.put_object(
             Key=filename,
@@ -41,7 +40,6 @@ def file_upload():
             if 'Messages' in resp:
                 message = resp['Messages'][0]
                 receipt_handle=message['ReceiptHandle']
-        
                 sqs.delete_message(
                     QueueUrl=resp_queue_url,
                     ReceiptHandle=receipt_handle
