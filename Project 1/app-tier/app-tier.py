@@ -44,8 +44,8 @@ while True:
         #     Key=filename,
         #     Bucket='1229560048-in-bucket'
         #     )
-        file = s3.download_file('1229560048-in-bucket', filename, 'D:/Amogh/Resume/{}'.format(filename))
-        prediction = subprocess.check_output("python3 face_recognition.py D:/Amogh/Resume/{}".format(filename), shell=True)
+        file = s3.download_file('1229560048-in-bucket', filename, '~/{}'.format(filename))
+        prediction = subprocess.check_output("python3 face_recognition.py ~/{}".format(filename), shell=True)
         print(prediction.decode().strip())
         s3.put_object(Key=filename.split('.')[0],
                       Body=prediction,
