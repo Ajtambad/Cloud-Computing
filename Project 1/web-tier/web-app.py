@@ -16,7 +16,6 @@ input_bucket = '1229560048-in-bucket'
 warnings.simplefilter(action='ignore', category=FutureWarning)
 app = Flask(__name__)
 
-prediction='Something'
 @app.route("/", methods=["GET", "POST"])
 def file_upload():
     if request.method == "POST":
@@ -53,4 +52,5 @@ def file_upload():
 
               
 if __name__ == "__main__":
+    prediction='Something'
     app.run(debug=False)
