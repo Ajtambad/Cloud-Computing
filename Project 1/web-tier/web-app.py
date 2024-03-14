@@ -47,7 +47,7 @@ def file_upload():
                     )
             else:
                 break
-        return  
+        return prediction 
     else:
         return "Server is running!"
 
