@@ -5,13 +5,14 @@ import requests
 import boto3
 from boto3 import Session
 import subprocess
+import os
 
-session = Session()
-credentials = session.get_credentials()
-current_creds = credentials.get_frozen_credentials()
+# session = Session()
+# credentials = session.get_credentials()
+# current_creds = credentials.get_frozen_credentials()
 
-sqs = boto3.client('sqs', region_name='us-east-1')
-s3 = boto3.client('s3', region_name='us-east-1')
+sqs = boto3.client('sqs', region_name='us-east-1', aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"], aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"])
+s3 = boto3.client('s3', region_name='us-east-1', aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"], aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"])
 req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
 resp_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-resp-queue'
 input_bucket = '1229560048-in-bucket'
