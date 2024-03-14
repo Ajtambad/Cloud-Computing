@@ -16,7 +16,7 @@ input_bucket = '1229560048-in-bucket'
 warnings.simplefilter(action='ignore', category=FutureWarning)
 app = Flask(__name__)
 
-
+prediction='Something'
 @app.route("/", methods=["GET", "POST"])
 def file_upload():
     if request.method == "POST":
@@ -40,13 +40,14 @@ def file_upload():
             if 'Messages' in resp:
                 message = resp['Messages'][0]
                 receipt_handle=message['ReceiptHandle']
+                prediction = message['Body']
                 sqs.delete_message(
                     QueueUrl=resp_queue_url,
                     ReceiptHandle=receipt_handle
                     )
             else:
                 break
-        return message['Body'] 
+        return  
     else:
         return "Server is running!"
 
