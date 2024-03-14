@@ -3,3 +3,4 @@ gunicorn
 gevent
 pandas
 boto3
+sudo pip install torch torchvision torchaudio --no-cache-dir --index-url https://download.pytorch.org/whl/cpu

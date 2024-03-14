@@ -46,7 +46,7 @@ def file_upload():
                     )
             else:
                 break
-        return "message['Body']" 
+        return message['Body'] 
     else:
         return "Server is running!"
 
