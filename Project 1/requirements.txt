@@ -2,3 +2,4 @@ flask
 gunicorn
 gevent
 pandas
+boto3

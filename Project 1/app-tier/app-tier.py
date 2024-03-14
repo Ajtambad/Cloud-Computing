@@ -5,8 +5,8 @@ import requests
 import boto3
 import subprocess
 
-sqs = boto3.client('sqs')
-s3 = boto3.client('s3')
+sqs = boto3.client('sqs', region_name='us-east-1')
+s3 = boto3.client('s3', region_name='us-east-1')
 
 req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
 resp_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-resp-queue'
