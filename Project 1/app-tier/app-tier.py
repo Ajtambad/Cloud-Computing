@@ -47,7 +47,7 @@ while True:
                       Bucket=output_bucket)
         sqs.send_message(
             QueueUrl=resp_queue_url,
-            MessageBody="{}:{}".format(filename, prediction)
+            MessageBody="{}:{}".format(filename.split('.')[0], prediction)
         )
         sqs.delete_message(
             QueueUrl=req_queue_url,
