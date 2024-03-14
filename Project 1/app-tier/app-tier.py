@@ -41,15 +41,15 @@ while True:
         filename = message['Body']
         file = s3.download_file('1229560048-in-bucket', filename, filename)
         pred_output = subprocess.run("python3 face_recognition.py {}".format(filename), shell=True, capture_output=True)
-        # prediction = pred_output
+        prediction = pred_output.stdout.decode().strip()
         print(pred_output.stdout.decode().strip())
-        # s3.put_object(Key=filename.split('.')[0],
-        #               Body=prediction,
-        #               Bucket=output_bucket)
-        # sqs.send_message(
-        #     QueueUrl=resp_queue_url,
-        #     MessageBody="{}:{}".format(filename, prediction)
-        # )
+        s3.put_object(Key=filename.split('.')[0],
+                      Body=prediction,
+                      Bucket=output_bucket)
+        sqs.send_message(
+            QueueUrl=resp_queue_url,
+            MessageBody="{}:{}".format(filename, prediction)
+        )
         sqs.delete_message(
             QueueUrl=req_queue_url,
             ReceiptHandle=receipt_handle
