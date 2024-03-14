@@ -39,7 +39,7 @@ while True:
         message = response['Messages'][0]
         receipt_handle = message['ReceiptHandle']
         filename = message['Body']
-        file = s3.download_file('1229560048-in-bucket', filename, '~/images/{}'.format(filename))
+        file = s3.download_file('1229560048-in-bucket', filename, '~/images/')
         print(file)
         prediction = subprocess.check_output("python3 face_recognition.py ~/images/{}".format(filename), shell=True)
         print(prediction.decode().strip())
