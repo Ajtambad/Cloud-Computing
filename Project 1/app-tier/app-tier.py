@@ -6,6 +6,7 @@ import boto3
 from boto3 import Session
 import subprocess
 import os
+import time
 
 # session = Session()
 # credentials = session.get_credentials()
@@ -19,7 +20,7 @@ input_bucket = '1229560048-in-bucket'
 output_bucket = '1229560048-out-bucket'
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-# app = Flask(__name__)
+app = Flask(__name__)
 
 
 classResDict = {}
@@ -50,6 +51,7 @@ while True:
                       Bucket=output_bucket)
         
         #Sending the filename and the prediction in the expected format to the RESPONSE QUEUE. 
+        print("{}:{}".format(filename.split('.')[0], prediction))
         sqs.send_message(
             QueueUrl=resp_queue_url,
             MessageBody="{}:{}".format(filename.split('.')[0], prediction)
@@ -62,6 +64,7 @@ while True:
         )
     else:
         print("Queue is empty")
+        time.sleep(2)
         continue
 
 
@@ -78,5 +81,5 @@ while True:
 #         print(response)
 #         return "Server is running"
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)

@@ -55,7 +55,6 @@ def file_upload():
                     QueueUrl=resp_queue_url,
                     ReceiptHandle=receipt_handle
                     )
-                return prediction
             else:
                 break
         return "Running complete!" 
