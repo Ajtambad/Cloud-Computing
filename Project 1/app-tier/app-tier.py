@@ -19,7 +19,7 @@ input_bucket = '1229560048-in-bucket'
 output_bucket = '1229560048-out-bucket'
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-app = Flask(__name__)
+# app = Flask(__name__)
 
 
 classResDict = {}
@@ -31,6 +31,7 @@ for ele in classRes.iterrows():
 
 while True:
 
+    #Reading filename from REQUESTS SQS QUEUE.
     response = sqs.receive_message(
     QueueUrl = req_queue_url,
     VisibilityTimeout=15
@@ -39,16 +40,22 @@ while True:
         message = response['Messages'][0]
         receipt_handle = message['ReceiptHandle']
         filename = message['Body']
-        file = s3.download_file('1229560048-in-bucket', filename, filename)
+        file = s3.download_file(input_bucket, filename, filename) #Downloading file from INPUT S3 BUCKET using the filename received from the REQUEST SQS QUEUE.
         pred_output = subprocess.run("python3 face_recognition.py {}".format(filename), shell=True, capture_output=True)
         prediction = pred_output.stdout.decode().strip()
+
+        #Generating predictions with the model and putting it in the S3 OUTPUT BUCKET.
         s3.put_object(Key=filename.split('.')[0],
                       Body=prediction,
                       Bucket=output_bucket)
+        
+        #Sending the filename and the prediction in the expected format to the RESPONSE QUEUE. 
         sqs.send_message(
             QueueUrl=resp_queue_url,
             MessageBody="{}:{}".format(filename.split('.')[0], prediction)
         )
+
+        #Deleting messages from the REQUEST QUEUE that were received.
         sqs.delete_message(
             QueueUrl=req_queue_url,
             ReceiptHandle=receipt_handle
@@ -71,5 +78,5 @@ while True:
 #         print(response)
 #         return "Server is running"
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True)

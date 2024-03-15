@@ -18,21 +18,28 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def file_upload():
+
+    #Listening for POST requests.
     if request.method == "POST":
         form = request.files.get('inputFile')
         filename = form.filename
         file_content = form.read()
+
+        #Putting the filename and the file itself into the INPUT S3 BUCKET.
         s3.put_object(
             Key=filename,
             Body=file_content,
             Bucket=input_bucket
         )
+
+        #Sending the filename to the REQUEST SQS QUEUE. 
         response = sqs.send_message(
             QueueUrl = req_queue_url,
             MessageBody=filename
         )
         while True:
-            prediction='Something'
+
+            #Receiving final prediction from the RESPONSE SQS QUEUE. 
             resp = sqs.receive_message(
             QueueUrl=resp_queue_url,
             VisibilityTimeout=15
@@ -42,6 +49,8 @@ def file_upload():
                 receipt_handle=message['ReceiptHandle']
                 prediction = message['Body']
                 print(prediction)
+
+                #Deleting messages from the RESPONSE SQS QUEUE after receiving predictions succesfully. 
                 sqs.delete_message(
                     QueueUrl=resp_queue_url,
                     ReceiptHandle=receipt_handle
@@ -49,10 +58,10 @@ def file_upload():
                 return prediction
             else:
                 break
-        return prediction 
+        return "Running complete!" 
     else:
         return "Server is running!"
 
-              
+
 if __name__ == "__main__":
     app.run(debug=False)
