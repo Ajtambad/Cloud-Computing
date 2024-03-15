@@ -55,7 +55,7 @@ while True:
         )
     else:
         print("Queue is empty")
-        break
+        continue
 
 
 # @app.route("/", methods=["GET", "POST"])
