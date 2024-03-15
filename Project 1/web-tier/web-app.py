@@ -32,6 +32,7 @@ def file_upload():
             MessageBody=filename
         )
         while True:
+            prediction='Something'
             resp = sqs.receive_message(
             QueueUrl=resp_queue_url,
             VisibilityTimeout=15
@@ -54,5 +55,4 @@ def file_upload():
 
               
 if __name__ == "__main__":
-    prediction='Something'
     app.run(debug=False)
