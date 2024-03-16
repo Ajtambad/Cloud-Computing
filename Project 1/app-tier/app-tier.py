@@ -55,7 +55,8 @@ while True:
         print("{}:{}".format(filename.split('.')[0], prediction))
         sqs.send_message(
             QueueUrl=resp_queue_url,
-            MessageBody="{}:{}".format(filename.split('.')[0], prediction)
+            MessageGroupId='Prediction Values',
+            MessageBody="{}:{}".format(filename.split('.')[0], prediction,)
         )
 
         #Deleting messages from the REQUEST QUEUE that were received.
