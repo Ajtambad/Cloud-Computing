@@ -39,7 +39,7 @@ def file_upload():
             MessageBody=filename
         )
         while True:
-
+            print("You have entered the while loop")
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
             resp = sqs.receive_message(
             QueueUrl=resp_queue_url,
