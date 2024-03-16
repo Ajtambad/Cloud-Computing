@@ -39,27 +39,30 @@ def file_upload():
         while True:
             time.sleep(2)
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
-            resp = sqs.receive_message(
+            responses = sqs.receive_messages(
             QueueUrl=resp_queue_url,
             VisibilityTimeout=20,
             WaitTimeSeconds=10,
+            MaxNumberOfMessages=10
             )
-            if 'Messages' in resp:
-                message = resp['Messages'][0]
-                receipt_handle=message['ReceiptHandle']
-                prediction = message['Body']
-                print(prediction)
+            for resp in responses:
+                if 'Messages' in resp:
+                    message = resp['Messages'][0]
+                    receipt_handle=message['ReceiptHandle']
+                    prediction = message['Body']
+                    print(prediction)
 
-                #Deleting messages from the RESPONSE SQS QUEUE after receiving predictions succesfully. 
-                sqs.delete_message(
-                    QueueUrl=resp_queue_url,
-                    ReceiptHandle=receipt_handle
-                    )
-                if prediction.split(':')[0] == filename.split('.')[0]:
-                    return prediction
-            else:
-                print("Queue is Empty")
-                continue
+                    #Deleting messages from the RESPONSE SQS QUEUE after receiving predictions succesfully. 
+                    sqs.delete_message(
+                        QueueUrl=resp_queue_url,
+                        ReceiptHandle=receipt_handle
+                        )
+                    
+                    if prediction.split(':')[0] == filename.split('.')[0]:
+                        return prediction
+                else:
+                    print("Queue is Empty")
+                    continue
         return "Running complete!" 
     else:
         return "Server is running!"
