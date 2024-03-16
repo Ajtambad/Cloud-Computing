@@ -41,22 +41,18 @@ def file_upload():
             MaxNumberOfMessages=10
             )
             for resp in responses:
-                if 'Messages' in resp:
-                    message = resp['Messages'][0]
-                    receipt_handle=message['ReceiptHandle']
-                    prediction = message['Body']
+                if resp:
+                    prediction = resp.body
                     print(prediction)
 
                     #Deleting messages from the RESPONSE SQS QUEUE after receiving predictions succesfully. 
-                    resp_queue.delete_messages(
-                        ReceiptHandle=receipt_handle
-                        )
-                    
                     if prediction.split(':')[0] == filename.split('.')[0]:
+                        resp.delete()
                         return prediction
                 else:
                     print("Queue is Empty")
                     continue
+
         return "Running complete!" 
     else:
         return "Server is running!"
