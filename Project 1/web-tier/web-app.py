@@ -18,7 +18,6 @@ def file_upload():
 
     #Listening for POST requests.
     if request.method == "POST":
-        print("Count the number of times this message is printed")
         form = request.files.get('inputFile')
         filename = form.filename
         file_content = form.read()
@@ -30,15 +29,14 @@ def file_upload():
             Bucket=input_bucket
         )
 
-        print("Files uploaded to S3. Now will now be uploaded to SQS")
         #Sending the filename to the REQUEST SQS QUEUE. 
         response = sqs.send_message(
             QueueUrl = req_queue_url,
             MessageBody=filename
         )
-        time.sleep(45)
+        time.sleep(60)
         while True:
-            print("You have entered the while loop")
+
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
             resp = sqs.receive_message(
             QueueUrl=resp_queue_url,
