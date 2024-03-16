@@ -36,7 +36,7 @@ def file_upload():
         )
         time.sleep(90)
         while True:
-
+            time.sleep(1)
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
             resp = sqs.receive_message(
             QueueUrl=resp_queue_url,
@@ -56,7 +56,8 @@ def file_upload():
                     )
                 return prediction
             else:
-                break
+                print("Queue is Empty")
+                continue
         return "Running complete!" 
     else:
         return "Server is running!"
