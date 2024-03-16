@@ -27,13 +27,13 @@ def file_upload():
         file_content = form.read()
 
         #Putting the filename and the file itself into the INPUT S3 BUCKET.
-        print("Files will now be uploaded to SQS and S3")
         s3.put_object(
             Key=filename,
             Body=file_content,
             Bucket=input_bucket
         )
 
+        print("Files uploaded to S3. Now will now be uploaded to SQS")
         #Sending the filename to the REQUEST SQS QUEUE. 
         response = sqs.send_message(
             QueueUrl = req_queue_url,
