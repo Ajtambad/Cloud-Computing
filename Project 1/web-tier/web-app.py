@@ -42,7 +42,8 @@ def file_upload():
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
             resp = sqs.receive_message(
             QueueUrl=resp_queue_url,
-            VisibilityTimeout=15
+            VisibilityTimeout=0,
+            WaitTimeSeconds=5,
             )
             if 'Messages' in resp:
                 message = resp['Messages'][0]
