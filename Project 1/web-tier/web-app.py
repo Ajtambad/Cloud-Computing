@@ -3,11 +3,11 @@ import warnings
 import boto3
 import time
 
-sqs = boto3.client('sqs', region_name='us-east-1')
+sqs = boto3.resource('sqs', region_name='us-east-1')
 s3 = boto3.client('s3', region_name='us-east-1')
 
-req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue.fifo'
-resp_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-resp-queue.fifo'
+req_queue = sqs.get_queue_by_name(QueueName="1229560048-req-queue")
+resp_queue = sqs.get_queue_by_name(QueueName="1229560048-resp-queue")
 input_bucket = '1229560048-in-bucket'
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -30,17 +30,12 @@ def file_upload():
         )
 
         #Sending the filename to the REQUEST SQS QUEUE. 
-        response = sqs.send_message(
-            QueueUrl = req_queue_url,
-            MessageGroupId='File_Send',
-            MessageBody=filename
-        )
+        req_queue.send_message(MessageBody=filename)
 
         while True:
             time.sleep(2)
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
-            responses = sqs.receive_messages(
-            QueueUrl=resp_queue_url,
+            responses = resp_queue.receive_messages(
             VisibilityTimeout=20,
             WaitTimeSeconds=10,
             MaxNumberOfMessages=10
@@ -53,8 +48,7 @@ def file_upload():
                     print(prediction)
 
                     #Deleting messages from the RESPONSE SQS QUEUE after receiving predictions succesfully. 
-                    sqs.delete_message(
-                        QueueUrl=resp_queue_url,
+                    resp_queue.delete_messages(
                         ReceiptHandle=receipt_handle
                         )
                     

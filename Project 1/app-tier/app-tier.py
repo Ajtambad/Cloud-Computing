@@ -14,8 +14,8 @@ import time
 
 sqs = boto3.client('sqs', region_name='us-east-1')
 s3 = boto3.client('s3', region_name='us-east-1')
-req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue.fifo'
-resp_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-resp-queue.fifo'
+req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
+resp_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-resp-queue'
 input_bucket = '1229560048-in-bucket'
 output_bucket = '1229560048-out-bucket'
 
