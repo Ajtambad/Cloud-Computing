@@ -27,6 +27,7 @@ def file_upload():
         file_content = form.read()
 
         #Putting the filename and the file itself into the INPUT S3 BUCKET.
+        print("Files will now be uploaded to SQS and S3")
         s3.put_object(
             Key=filename,
             Body=file_content,
@@ -38,7 +39,7 @@ def file_upload():
             QueueUrl = req_queue_url,
             MessageBody=filename
         )
-        print("Files have been uploaded to SQS and S3")
+        
         while True:
             print("You have entered the while loop")
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
