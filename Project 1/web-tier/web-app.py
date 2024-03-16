@@ -38,6 +38,7 @@ def file_upload():
             QueueUrl = req_queue_url,
             MessageBody=filename
         )
+        print("Files have been uploaded to SQS and S3")
         while True:
             print("You have entered the while loop")
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
