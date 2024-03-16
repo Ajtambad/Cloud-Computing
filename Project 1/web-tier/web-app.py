@@ -35,7 +35,7 @@ def file_upload():
         while True:
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
             responses = resp_queue.receive_messages(
-            VisibilityTimeout=15,
+            VisibilityTimeout=25,
             MaxNumberOfMessages=10
             )
             for resp in reversed(responses):
