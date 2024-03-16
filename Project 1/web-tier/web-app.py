@@ -34,14 +34,14 @@ def file_upload():
             QueueUrl = req_queue_url,
             MessageBody=filename
         )
-        
+
         while True:
             time.sleep(1)
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
             resp = sqs.receive_message(
             QueueUrl=resp_queue_url,
-            VisibilityTimeout=0,
-            WaitTimeSeconds=5,
+            VisibilityTimeout=20,
+            WaitTimeSeconds=10,
             )
             if 'Messages' in resp:
                 message = resp['Messages'][0]
