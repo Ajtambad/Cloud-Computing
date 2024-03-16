@@ -34,7 +34,7 @@ def file_upload():
             QueueUrl = req_queue_url,
             MessageBody=filename
         )
-        time.sleep(60)
+        time.sleep(90)
         while True:
 
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
