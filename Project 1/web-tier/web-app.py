@@ -1,10 +1,7 @@
 from flask import Flask, request, redirect
-import pandas as pd
 import warnings
-import requests
 import boto3
-from botocore.config import Config
-import os
+import time
 
 sqs = boto3.client('sqs', region_name='us-east-1')
 s3 = boto3.client('s3', region_name='us-east-1')
@@ -39,7 +36,7 @@ def file_upload():
             QueueUrl = req_queue_url,
             MessageBody=filename
         )
-        
+        time.sleep(45)
         while True:
             print("You have entered the while loop")
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
