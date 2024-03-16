@@ -21,6 +21,7 @@ def file_upload():
 
     #Listening for POST requests.
     if request.method == "POST":
+        print("Count the number of times this message is printed")
         form = request.files.get('inputFile')
         filename = form.filename
         file_content = form.read()
