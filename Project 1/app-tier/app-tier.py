@@ -55,7 +55,7 @@ while True:
         print("{}:{}".format(filename.split('.')[0], prediction))
         sqs.send_message(
             QueueUrl=resp_queue_url,
-            MessageGroupId='Prediction Values',
+            MessageGroupId='Prediction_Values',
             MessageBody="{}:{}".format(filename.split('.')[0], prediction,)
         )
 

@@ -32,7 +32,7 @@ def file_upload():
         #Sending the filename to the REQUEST SQS QUEUE. 
         response = sqs.send_message(
             QueueUrl = req_queue_url,
-            MessageGroupId='File send',
+            MessageGroupId='File_Send',
             MessageBody=filename
         )
 
