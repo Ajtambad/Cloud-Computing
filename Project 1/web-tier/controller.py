@@ -3,10 +3,10 @@ from boto3 import Session
 import time
 
 session = Session()
-credentials = session.get_credentials()
-current_creds = credentials.get_frozen_credentials()
+# credentials = session.get_credentials()
+# current_creds = credentials.get_frozen_credentials()
 
-ec2 = boto3.resource('ec2', region_name='us-east-1', aws_access_key_id=current_creds.access_key, aws_secret_access_key=current_creds.secret_key)
+ec2 = boto3.resource('ec2', region_name='us-east-1')
 sqs = boto3.client('sqs', region_name='us-east-1')
 
 req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
