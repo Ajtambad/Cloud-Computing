@@ -22,7 +22,8 @@ wget https://bootstrap.pypa.io/get-pip.py
 python3 ./get-pip.py
 sudo dnf -y install git-all
 git clone https://github.com/Ajtambad/Cloud-Computing.git
-cd 'Cloud-Computing/Project 1'
+cd 'Cloud-Computing/Project 1/web-tier'
 git pull
 sudo python3 -m pip install -r requirements.txt
-sudo gunicorn app:app --bind 0.0.0.0:80 --worker-class gevent --daemon
+sudo gunicorn web-app:app --bind 0.0.0.0:80 --worker-class gevent --daemon
+bash -c "exec sudo python3 controller.py &"
