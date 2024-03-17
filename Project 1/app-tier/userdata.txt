@@ -23,3 +23,4 @@ python3 ./get-pip.py
 sudo dnf -y install git-all
 git clone https://github.com/Ajtambad/Cloud-Computing.git
 cd 'Cloud-Computing/Project 1/app-tier'
+sudo gunicorn app-tier:app --bind 0.0.0.0:80 --worker-class gevent --daemon
