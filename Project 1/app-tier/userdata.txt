@@ -24,6 +24,6 @@ sudo dnf -y install git-all
 git clone https://github.com/Ajtambad/Cloud-Computing.git
 cd 'Cloud-Computing/Project 1/app-tier'
 sudo python3 -m pip install -r requirements.txt
-sudo pip install torch --no-cache-dir --index-url https://download.pytorch.org/whl/cpu
-sudp pip install Pillow
+sudo pip install torch torchvision --no-cache-dir --index-url https://download.pytorch.org/whl/cpu
+sudo pip install Pillow
 sudo gunicorn app-tier:app --bind 0.0.0.0:80 --worker-class gevent --daemon

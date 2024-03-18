@@ -1,98 +1,147 @@
-import boto3
-from boto3 import Session
 import time
 
-# session = Session()
-# credentials = session.get_credentials()
-# current_creds = credentials.get_frozen_credentials()
-ec2 = boto3.resource('ec2', region_name='us-east-1')
-sqs = boto3.client('sqs', region_name='us-east-1')
+import boto3
 
-req_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue'
-resp_queue_url = 'https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-resp-queue'
+req_queue_url = "https://sqs.us-east-1.amazonaws.com/211125745270/1229560048-req-queue"
 
-def get_queue_messages():
-    queue_att = sqs.get_queue_attributes(QueueUrl=req_queue_url,
-                                        AttributeNames=['ApproximateNumberOfMessages','ApproximateNumberOfMessagesNotVisible'])
-    return int(queue_att['Attributes']['ApproximateNumberOfMessages']) + int(queue_att['Attributes']['ApproximateNumberOfMessagesNotVisible'])
+class AutoController:
 
-def num_instances_to_create(num_mess) -> int:
-    return min(num_mess, 19)
+    def __init__(self, req_queue_url):
+        self.sqs = boto3.client('sqs', region_name='us-east-1')
+        self.ec2 = boto3.client('ec2', region_name='us-east-1')
+        self.req_queue_url = req_queue_url
+        self.desiredCapacity = 0
+        self.targetToReach = 0
+        self.target_not_reached = 0
+        self.recAttempts = 15
+        self.maxAttempts = 25
+        self.instances = [None]*20
+        self.runningInstances = [False]*20
 
-def create_instances(total_instances):
-    count = 0
-    for i in range(total_instances):
-        
-        instance = ec2.create_instances(
-            LaunchTemplate={'LaunchTemplateId':'lt-011262481f4b71e5a'},
-            MinCount=1,
-            MaxCount=1,
-            TagSpecifications=[{'ResourceType':'instance',
-                                'Tags': [{
-                                    'Key': 'Name',
-                                    'Value': 'app-tier-instance-{}'.format(i+1)}]
-                                    }],
+
+    def get_queueLength(self):
+        response = self.sqs.get_queue_attributes(
+            QueueUrl=self.req_queue_url,
+            AttributeNames=['ApproximateNumberOfMessages', 'ApproximateNumberOfMessagesNotVisible']
         )
-        count += 1
-    return count
+        return int(response['Attributes']['ApproximateNumberOfMessages']) + int(response['Attributes']['ApproximateNumberOfMessagesNotVisible'])
 
-def all_instance_count():
-    count = 0
-    for instance in ec2.instances.all():
-        if (instance.state['Name'] == 'running' or instance.state['Name'] == 'pending') and instance.id != 'i-074ec05ec1e589838':
-            count += 1
-    return count
 
-def running_instance_list():
-    instances=[]
-    for instance in ec2.instances.all():
-        if (instance.state['Name'] == 'running') and instance.id != 'i-074ec05ec1e589838':
-            instances.append(instance)
-    return instances
+    def running_instances(self):
+        count = 0
+        instance_ids = [instance_id for instance_id in self.instances if instance_id is not None]
+        if len(instance_ids) > 0:
+            resp = self.ec2.describe_instance_status(
+                InstanceIds=instance_ids,
+                IncludeAllInstances=True,
+            )
+            for instance_status in resp['InstanceStatuses']:
+                i = self.instances.index(instance_status['InstanceId'])
+                self.runningInstances[i] = instance_status['InstanceState']['Name'] == 'running'
+                count = count + (1 if self.runningInstances[i] else 0)
+        return count
 
-def terminate_instances(num_mess, instances):
-    curr_num_mess = num_mess
 
-    #It should enter the loop ONLY if there are more than 0 messages in the queue AND if there are more than 0 instances running.
-    while (num_mess > 0 or (curr_num_mess != 1 and curr_num_mess != 0)) and len(instances)>0:
-        time.sleep(1)
-        print(num_mess)
-        curr_num_mess = num_mess
-        num_mess = get_queue_messages()
+    def setCapacity(self, capacity):
+        self.desiredCapacity = capacity
 
-        #It should enter the loop ONLY after messages from REQUEST queue have moved to the RESPONSE queue.
-        while (curr_num_mess - num_mess) > 0 and len(instances) > 0:
-            #Code to Terminate Instance
-            print(instances[0].id)
-            resp = instances[0].terminate()
-            instances.remove(instances[0])
-            curr_num_mess -= 1
-        
+
+    def spin_instance(self, name):
+        resp = self.ec2.run_instances(
+            LaunchTemplate={
+                'LaunchTemplateId':'lt-011262481f4b71e5a'
+            },
+            TagSpecifications=[
+                {
+                    'ResourceType': 'instance',
+                    'Tags': [
+                        {
+                            'Key': 'Name',
+                            'Value': name,
+                        },
+                    ]
+                },
+            ],
+            MaxCount=1,
+            MinCount=1,
+        )
+        return resp['Instances'][0]['InstanceId']
+
+    def updateInstanceState(self):
+        for i, instance in enumerate(self.instances):
+            if i < self.desiredCapacity and instance is not None and not self.runningInstances[i] and self.target_not_reached == self.recAttempts:
+                print("Recreating instance: ", i + 1)
+                self.ec2.terminate_instances(InstanceIds=[instance])
+                self.instances[i] = self.instances[i] = self.spin_instance('app-tier-instance-' + str(i + 1))
+            elif i < self.desiredCapacity and instance is None:
+                self.instances[i] = self.spin_instance('app-tier-instance-' + str(i + 1))
+            elif i >= self.desiredCapacity and instance is not None:
+                 self.ec2.terminate_instances(InstanceIds=[instance])
+                 self.instances[i] = None
+
+    def scaleDownFlag(self, current_instance_count):
+        if current_instance_count < self.targetToReach:
+            self.target_not_reached += 1
+            if self.target_not_reached == self.maxAttempts:
+                print("Max Attempts Reached. Scaling down")
+                self.target_not_reached = 0
+                self.targetToReach = 0
+                return True
+            else:
+                print("Target: ", self.targetToReach, " not yet reached, not scaling down")
+                return False
+        print("Target: ", self.targetToReach, " reached, scaling down")
+        self.target_not_reached = 0
+        self.targetToReach = 0
+        return True
+
+    def scale(self):
+        instanceCount = self.running_instances()
+        queueLen = self.get_queueLength()
+
+        print("Instances: ", instanceCount)
+        print("Queue length: ", queueLen)
+
+        if instanceCount < queueLen:
+            newInstCount = instanceCount + (queueLen - instanceCount)
+            newInstCount = min(20, newInstCount)
+            self.targetToReach = max(self.targetToReach, newInstCount)
+            print("Setting capacity to: ", self.targetToReach)
+            self.setCapacity(self.targetToReach)
+
+        elif instanceCount > queueLen:
+            # Do not scale down until targetToReach has been reached.
+            if not self.scaleDownFlag(instanceCount):
+                self.updateInstanceState()
+                return
+            newInstCount = instanceCount - (instanceCount - queueLen)
+            newInstCount = max(0, newInstCount)
+            print("Setting capacity to: ", newInstCount)
+            self.setCapacity(newInstCount)
+
+        self.updateInstanceState()
+
+
 if __name__ == "__main__":
-    
-    running_instances = []
-    created_instances = []
-    targetInstanceNum = 0
-    instancesCreated=0
-
     while True:
-        time.sleep(5)
-        num_messages_req = get_queue_messages()
-        if num_messages_req > 0:
-            targetInstanceNum = num_instances_to_create(num_messages_req) #If REQ QUEUE < 19 messages, then targetInstance=num_messages 
-                                                                        #Else, targetInstance=19
-            instanceCount = all_instance_count() #Number of pending + running instances
-                
-            while instanceCount < targetInstanceNum: 
-                instanceCount = targetInstanceNum - instanceCount
-                create_instances(instanceCount) #Create more instances if running + pending is less than 
-                                                                         #how many instances we need. 
-            instancesCreated = instanceCount
-
-            running_instances = running_instance_list()
-            terminate_instances(instancesCreated, running_instances)
-            break
-
-
-        
-
+        try:
+            client = boto3.client('ec2', region_name='us-east-1')
+            delInstances = list(
+                boto3.resource('ec2', region_name='us-east-1').instances.filter(
+                    Filters=[
+                        {
+                            'Name': 'tag:Name',
+                            'Values': ["app-tier-instance*"]
+                        },
+                    ],
+                )
+            )
+            delInstances = [instance.id for instance in delInstances]
+            if len(delInstances) > 0:
+                client.terminate_instances(InstanceIds=delInstances)
+            auto_controller = AutoController(req_queue_url)
+            while True:
+                time.sleep(5)
+                auto_controller.scale()
+        except Exception:
+            print("Auto controller not working as expected, trying again")
