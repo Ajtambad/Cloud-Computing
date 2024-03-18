@@ -38,7 +38,6 @@ def file_upload():
             responses = resp_queue.receive_messages(
             VisibilityTimeout=15,
             MaxNumberOfMessages=10,
-            WaitTimeSeconds=5
             )
             for resp in reversed(responses):
                 if resp:
@@ -49,7 +48,7 @@ def file_upload():
                         resp.delete()
                         return prediction
                 else:
-                    time.sleep(0.5)
+                    continue
     else:
         return "Server is running!"
 

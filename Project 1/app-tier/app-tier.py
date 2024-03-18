@@ -37,7 +37,6 @@ while True:
     QueueUrl = req_queue_url,
     VisibilityTimeout=15,
     MaxNumberOfMessages=3,
-    WaitTimeSeconds=5
     )
     if 'Messages' in response:
         message = response['Messages'][0]
