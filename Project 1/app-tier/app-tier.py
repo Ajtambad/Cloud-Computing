@@ -44,7 +44,6 @@ while True:
         filename = message['Body']
         file = s3.download_file(input_bucket, filename, filename) #Downloading file from INPUT S3 BUCKET using the filename received from the REQUEST SQS QUEUE.
         pred_output = subprocess.run("python3 face_recognition.py {}".format(filename), shell=True, capture_output=True)
-        print(pred_output)
         prediction = pred_output.stdout.decode().strip()
 
         #Generating predictions with the model and putting it in the S3 OUTPUT BUCKET.
