@@ -44,7 +44,7 @@ def file_upload():
                     prediction = resp.body
 
                     #Deleting messages from the RESPONSE SQS QUEUE after receiving predictions succesfully. 
-                    if prediction.startswith(filename.split('.')[0]):
+                    if prediction.split(':')[0] == filename.split('.')[0]:
                         resp.delete()
                         return prediction
                 else:
