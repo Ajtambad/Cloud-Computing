@@ -47,9 +47,9 @@ while True:
         prediction = pred_output.stdout.decode().strip()
 
         #Generating predictions with the model and putting it in the S3 OUTPUT BUCKET.
-        # s3.put_object(Key=filename.split('.')[0],
-        #               Body=prediction,
-        #               Bucket=output_bucket)
+        s3.put_object(Key=filename.split('.')[0],
+                      Body=prediction,
+                      Bucket=output_bucket)
         
         #Sending the filename and the prediction in the expected format to the RESPONSE QUEUE. 
         print("{}:{}".format(filename.split('.')[0], prediction))

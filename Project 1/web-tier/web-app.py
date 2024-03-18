@@ -36,7 +36,7 @@ def file_upload():
             
             #Receiving final prediction from the RESPONSE SQS QUEUE. 
             responses = resp_queue.receive_messages(
-            VisibilityTimeout=15,
+            VisibilityTimeout=10,
             MaxNumberOfMessages=10,
             )
             for resp in reversed(responses):
@@ -44,11 +44,12 @@ def file_upload():
                     prediction = resp.body
 
                     #Deleting messages from the RESPONSE SQS QUEUE after receiving predictions succesfully. 
-                    if prediction.split(':')[0] == filename.split('.')[0]:
+                    if prediction.startswith(filename.split('.')[0]):
                         resp.delete()
                         return prediction
                 else:
                     continue
+        return "Something"
     else:
         return "Server is running!"
 
