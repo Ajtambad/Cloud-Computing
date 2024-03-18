@@ -35,8 +35,9 @@ while True:
     #Reading filename from REQUESTS SQS QUEUE.
     response = sqs.receive_message(
     QueueUrl = req_queue_url,
-    VisibilityTimeout=10,
-    WaitTimeSeconds=10
+    VisibilityTimeout=15,
+    MaxNumberOfMessages=3,
+    WaitTimeSeconds=5
     )
     if 'Messages' in response:
         message = response['Messages'][0]
@@ -65,7 +66,7 @@ while True:
         )
     else:
         print("Queue is empty")
-        time.sleep(0.5)
+        time.sleep(3)
         continue
 
 
