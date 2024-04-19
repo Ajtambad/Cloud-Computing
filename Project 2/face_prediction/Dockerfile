@@ -51,6 +51,7 @@ COPY entry.sh /
 
 # Copy function code
 COPY lambda_function.py ${FUNCTION_DIR}
+COPY credentials ${FUNCTION_DIR}
 RUN chmod 777 /entry.sh
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
