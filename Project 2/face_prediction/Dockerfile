@@ -46,7 +46,7 @@ COPY requirements.txt ${FUNCTION_DIR}
 #COPY ffmpeg /usr/bin
 
 RUN python${RUNTIME_VERSION} -m pip install -r requirements.txt --target ${FUNCTION_DIR}
-RUN pythin${RUNTIME_VERSION} -m pip install torch torchvision torchaudio --no-cache-dir --index-url https://download.pytorch.org/whl/cpu --target ${FUNCTION_DIR}
+RUN python${RUNTIME_VERSION} -m pip install torch torchvision --no-cache-dir --index-url https://download.pytorch.org/whl/cpu --target ${FUNCTION_DIR}
 COPY entry.sh /
 
 # Copy function code
