@@ -6,7 +6,7 @@ s3 = boto3_client('s3', region_name='us-east-1')
 
 output_bucket = '1229560048-output'
 
-def lambda_handler(event, context):
+def handler(event, context):
 # def lambda_handler():
 
     stage_1_bucket = event['bucket_name']

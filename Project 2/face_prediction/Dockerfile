@@ -50,9 +50,9 @@ RUN python${RUNTIME_VERSION} -m pip install torch torchvision --no-cache-dir --i
 COPY entry.sh /
 
 # Copy function code
-COPY lambda_function.py ${FUNCTION_DIR}
+COPY handler.py ${FUNCTION_DIR}
 RUN chmod 777 /entry.sh
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 ENTRYPOINT [ "/entry.sh" ]
-CMD [ "handler.lambda_handler" ]
+CMD [ "handler.handler" ]
