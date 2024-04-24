@@ -43,6 +43,7 @@ RUN apt-get update
 # Copy handler function
 COPY requirements.txt ${FUNCTION_DIR}
 COPY face-recognition-code.py ${FUNCTION_DIR}
+COPY face-extraction-code.py ${FUNCTION_DIR}
 COPY facenet_pytorch ${FUNCTION_DIR}
 #COPY ffmpeg ${FUNCTION_DIR}
 #COPY ffmpeg /usr/bin
