@@ -39,6 +39,7 @@ RUN chmod 755 /usr/bin/aws-lambda-rie
 
 # Install ffmpeg
 RUN apt-get update 
+RUN apt-get install -y ffmpeg
 
 # Copy handler function
 COPY requirements.txt ${FUNCTION_DIR}
