@@ -45,7 +45,7 @@ COPY requirements.txt ${FUNCTION_DIR}
 COPY face-recognition-code.py ${FUNCTION_DIR}
 COPY face-extraction-code.py ${FUNCTION_DIR}
 COPY facenet_pytorch ${FUNCTION_DIR}
-COPY test_4.mp4 "/home/app/temp"
+COPY test_4.mp4 "/home/app/tmp/"
 #COPY ffmpeg ${FUNCTION_DIR}
 #COPY ffmpeg /usr/bin
 
