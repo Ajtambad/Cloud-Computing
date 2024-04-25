@@ -34,6 +34,7 @@ def face_recognition_function(key_path):
         # Save the result name in a file
         with open("/tmp/" + key + ".txt", 'w+') as f:
             f.write(name_list[idx_min])
+        print(name_list[idx_min])
         return name_list[idx_min]
     else:
         print(f"No face is detected")
