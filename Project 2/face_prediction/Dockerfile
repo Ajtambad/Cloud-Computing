@@ -43,8 +43,7 @@ RUN apt-get install -y ffmpeg
 
 # Copy handler function
 COPY requirements.txt ${FUNCTION_DIR}
-COPY face-recognition-code.py ${FUNCTION_DIR}
-COPY face-extraction-code.py ${FUNCTION_DIR}
+# COPY face-recognition-code.py ${FUNCTION_DIR}
 ADD facenet_pytorch "/home/app/facenet_pytorch"
 # COPY test_5.jpg ${FUNCTION_DIR}
 #COPY ffmpeg ${FUNCTION_DIR}
