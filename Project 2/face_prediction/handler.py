@@ -22,7 +22,7 @@ def handler(event, context):
     
     pred_output = subprocess.run("python3 /tmp/face-recognition-code.py {}".format(filename), shell=True, capture_output=True)
     prediction = pred_output.stdout.decode().strip()
-    print(prediction)
+    print(pred_output)
     
     file_upload = s3.put_object(Key=filename.split('.')[0] + '.txt',
                       Body=prediction,
