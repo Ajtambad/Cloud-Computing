@@ -43,11 +43,11 @@ RUN apt-get install -y ffmpeg
 
 # Copy handler function
 COPY requirements.txt ${FUNCTION_DIR}
-# COPY face-recognition-code.py ${FUNCTION_DIR}
+COPY face-recognition-code.py ${FUNCTION_DIR}
 ADD facenet_pytorch "/home/app/facenet_pytorch"
 # COPY test_5.jpg ${FUNCTION_DIR}
-#COPY ffmpeg ${FUNCTION_DIR}
-#COPY ffmpeg /usr/bin
+# COPY ffmpeg ${FUNCTION_DIR}
+# COPY ffmpeg /usr/bin
 
 RUN python${RUNTIME_VERSION} -m pip install -r requirements.txt --target ${FUNCTION_DIR}
 RUN python${RUNTIME_VERSION} -m pip install torch torchvision --no-cache-dir --index-url https://download.pytorch.org/whl/cpu --target ${FUNCTION_DIR}
