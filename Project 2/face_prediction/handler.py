@@ -5,6 +5,7 @@ import os
 s3 = boto3_client('s3', region_name='us-east-1')
 
 output_bucket = '1229560048-output'
+package_bucket = '1229560048-package'
 
 def handler(event, context):
 # def lambda_handler():
@@ -16,9 +17,11 @@ def handler(event, context):
     file_path = os.path.join('/tmp', filename)
 
     file = s3.download_file(stage_1_bucket, filename, file_path)
+    s3.download_file(package_bucket, 'data.pt', '/tmp/data.pt')
     
-    output = subprocess.run("python3 face-extraction-code.py {}".format(file_path), shell=True, capture_output=True)
-    print(output)
+    pred_output = subprocess.run("python3 face_recognition.py {}".format(filename), shell=True, capture_output=True)
+    prediction = pred_output.stdout.decode().strip()
+
     return "Something"
     # extraction_folder_name = output.stdout.decode().strip()
 
