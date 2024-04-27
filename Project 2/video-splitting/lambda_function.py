@@ -48,5 +48,4 @@ def lambda_handler(event, context):
 
     responsePayload = json.load(response['Payload'])
     print(responsePayload)
-
     return outfile
