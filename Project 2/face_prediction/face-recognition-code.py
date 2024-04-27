@@ -5,11 +5,14 @@ import os
 import cv2
 from PIL import Image
 from facenet_pytorch import MTCNN, InceptionResnetV1
+from shutil import rmtree
 import torch
+import sys
 
 
 mtcnn = MTCNN(image_size=240, margin=0, min_face_size=20) # initializing mtcnn for face detection
 resnet = InceptionResnetV1(pretrained='vggface2').eval() # initializing resnet for face img to embeding conversion
+test_image = sys.argv[1]
 
 def face_recognition_function(key_path):
     # Face extraction
@@ -20,7 +23,7 @@ def face_recognition_function(key_path):
     key = os.path.splitext(os.path.basename(key_path))[0].split(".")[0]
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     face, prob = mtcnn(img, return_prob=True, save_path=None)
-    saved_data = torch.load('face_recognition_additional_files/tmp/data.pt')  # loading data.pt file
+    saved_data = torch.load('/tmp/data.pt')  # loading data.pt file"
     if face != None:
         emb = resnet(face.unsqueeze(0)).detach()  # detech is to make required gradient false
         embedding_list = saved_data[0]  # getting embedding data
@@ -32,12 +35,17 @@ def face_recognition_function(key_path):
         idx_min = dist_list.index(min(dist_list))
 
         # Save the result name in a file
-        with open("/tmp/" + key + ".txt", 'w+') as f:
-            f.write(name_list[idx_min])
+        # with open("/tmp/" + key + ".txt", 'w+') as f:
+        #     f.write(name_list[idx_min])
         return name_list[idx_min]
     else:
         print(f"No face is detected")
     return
+
+result = face_recognition_function(test_image)
+print(result)
+# if __name__ == "__main__":
+#     face_recognition_function(str(sys.argv))
 
 
 
