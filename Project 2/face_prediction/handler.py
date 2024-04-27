@@ -21,7 +21,8 @@ def handler(event, context):
     print(file_path)
     file = s3.download_file(stage_1_bucket, filename, file_path)
     s3.download_file(package_bucket, 'data.pt', '/tmp/data.pt')
-
+    ls_op = subprocess.run('ls', shell=True, capture_output=True)
+    print(ls_op)
     pred_output = subprocess.run("python3 face-recognition-code.py {}".format(file_path), shell=True, capture_output=True)
     print(pred_output)
     prediction = pred_output.stdout.decode().strip()
