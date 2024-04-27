@@ -21,12 +21,11 @@ def handler(event, context):
     s3.download_file(package_bucket, 'face-recognition-code.py', '/tmp/face-recognition-code.py')
     pred_output = subprocess.run("python3 /tmp/face-recognition-code.py {}".format(file_path), shell=True, capture_output=True)
     prediction = pred_output.stdout.decode().strip()
-    
+    print(prediction)
     file_upload = s3.put_object(Key=filename.split('.')[0] + '.txt',
                       Body=prediction,
                       Bucket=output_bucket)
     
-    print(file_upload)
     return "Something"
     # extraction_folder_name = output.stdout.decode().strip()
 

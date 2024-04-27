@@ -24,6 +24,7 @@ def face_recognition_function(key_path):
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     face, prob = mtcnn(img, return_prob=True, save_path=None)
     saved_data = torch.load('/tmp/data.pt')  # loading data.pt file"
+    print(saved_data)
     if face != None:
         emb = resnet(face.unsqueeze(0)).detach()  # detech is to make required gradient false
         embedding_list = saved_data[0]  # getting embedding data
