@@ -19,6 +19,12 @@ def lambda_handler(event, context):
     video_filename = os.path.join('/tmp', video_filename)
     file = s3.download_file(input_bucket, filename, video_filename) #Download from input S3 bucket
     outfile = os.path.splitext(filename)[0] + ".jpg"
+    split_cmd = 'ffmpeg -i ' + video_filename + ' -vframes 1 ' + '/tmp/' + outfile
+    try:
+        subprocess.check_call(split_cmd, shell=True)
+    except subprocess.CalledProcessError as e:
+        print(e.returncode)
+        print(e.output)
 
     input = {
         'bucket_name':'1229560048-stage-1',
@@ -30,19 +36,9 @@ def lambda_handler(event, context):
         InvocationType = 'RequestResponse',
         Payload = json.dumps(input)
     )
-
     responsePayload = json.load(response['Payload'])
-    print(responsePayload)
-    split_cmd = 'ffmpeg -i ' + video_filename + ' -vframes 1 ' + '/tmp/' + outfile
-    try:
-        subprocess.check_call(split_cmd, shell=True)
-    except subprocess.CalledProcessError as e:
-        print(e.returncode)
-        print(e.output)
 
     #Upload to Stage-1 S3 Bucket
-    dir = os.listdir('/tmp/output/')
-    for file in dir:
-        s3.upload_file('/tmp/output/' + file, stage_1_bucket, outfile)
+    s3.upload_file('/tmp/' + outfile, stage_1_bucket, outfile)
 
     return outfile
