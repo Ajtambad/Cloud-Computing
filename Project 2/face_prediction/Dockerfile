@@ -3,7 +3,7 @@
 
 # Define global args
 ARG FUNCTION_DIR="/home/app/"
-ARG RUNTIME_VERSION="3.9.16"
+ARG RUNTIME_VERSION="3.8"
 ARG DISTRO_VERSION="3.12"
 
 FROM alpine:latest
@@ -11,7 +11,7 @@ FROM python:${RUNTIME_VERSION}-slim AS python-alpine
 
 #RUN apt-get update \
 #    && apt-get install -y cmake ca-certificates libgl1-mesa-glx
-RUN python${RUNTIME_VERSION} -m pip install --upgrade pip
+RUN python3${RUNTIME_VERSION} -m pip install --upgrade pip
 
 FROM python-alpine AS build-image
 
@@ -22,7 +22,7 @@ ARG RUNTIME_VERSION
 RUN mkdir -p ${FUNCTION_DIR}
 
 # Install Lambda Runtime Interface Client for Python
-RUN python${RUNTIME_VERSION} -m pip install awslambdaric --target ${FUNCTION_DIR}
+RUN python3${RUNTIME_VERSION} -m pip install awslambdaric --target ${FUNCTION_DIR}
 
 # Stage 3 - final runtime image
 # Grab a fresh copy of the Python image
@@ -50,9 +50,9 @@ COPY test_03.jpg ${FUNCTION_DIR}
 # COPY ffmpeg ${FUNCTION_DIR}
 # COPY ffmpeg /usr/bin
 
-RUN python${RUNTIME_VERSION} -m pip install -r requirements.txt --target ${FUNCTION_DIR}
+RUN python3${RUNTIME_VERSION} -m pip install -r requirements.txt --target ${FUNCTION_DIR}
 # RUN python${RUNTIME_VERSION} -m pip install opencv-python --target {FUNCTION_DIR}
-RUN python${RUNTIME_VERSION} -m pip install torch torchvision --no-cache-dir --index-url https://download.pytorch.org/whl/cpu --target {FUNCTION_DIR}
+RUN python3${RUNTIME_VERSION} -m pip install torch torchvision --no-cache-dir --index-url https://download.pytorch.org/whl/cpu --target {FUNCTION_DIR}
 # RUN python${RUNTIME_VERSION} -m pip install Pillow --target ${FUNCTION_DIR}
 COPY entry.sh /
 
