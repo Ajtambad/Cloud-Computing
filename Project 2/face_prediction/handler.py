@@ -8,9 +8,11 @@ s3 = boto3_client('s3', region_name='us-east-1')
 output_bucket = '1229560048-output'
 package_bucket = '1229560048-package'
 
+print("Outside function")
+
 def handler(event, context):
 # def handler():
-
+    print("your mom")
     stage_1_bucket = event['bucket_name']
     filename = event['image_file_name']
     # stage_1_bucket = '1229560048-stage-1'
