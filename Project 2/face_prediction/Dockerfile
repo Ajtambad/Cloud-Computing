@@ -50,7 +50,7 @@ COPY test_03.jpg ${FUNCTION_DIR}
 # COPY ffmpeg ${FUNCTION_DIR}
 # COPY ffmpeg /usr/bin
 
-RUN python${RUNTIME_VERSION} -m pip install -r requirements.txt --target ${FUNCTION_DIR}
+RUN python${RUNTIME_VERSION} -m pip install -r requirements.txt --target '/tmp/'
 RUN python${RUNTIME_VERSION} -m pip install opencv-python
 RUN python${RUNTIME_VERSION} -m pip install torch torchvision --no-cache-dir --index-url https://download.pytorch.org/whl/cpu --target ${FUNCTION_DIR}
 COPY entry.sh /
