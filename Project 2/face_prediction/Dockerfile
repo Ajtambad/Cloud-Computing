@@ -3,7 +3,7 @@
 
 # Define global args
 ARG FUNCTION_DIR="/home/app/"
-ARG RUNTIME_VERSION="3.8"
+ARG RUNTIME_VERSION="3.9.16"
 ARG DISTRO_VERSION="3.12"
 
 FROM alpine:latest
