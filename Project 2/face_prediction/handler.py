@@ -1,6 +1,5 @@
 from boto3 import client as boto3_client
 import subprocess
-from faceRecognitionCode import face_recognition_function
 import os
 
 s3 = boto3_client('s3', region_name='us-east-1')
