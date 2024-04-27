@@ -12,7 +12,6 @@ print("Outside function")
 
 def handler(event, context):
 # def handler():
-    print("your mom")
     stage_1_bucket = event['bucket_name']
     filename = event['image_file_name']
     # stage_1_bucket = '1229560048-stage-1'
@@ -22,6 +21,7 @@ def handler(event, context):
     s3.download_file(package_bucket, 'data.pt', '/tmp/data.pt')
     pred_output = subprocess.run("python3 face-recognition-code.py {}".format(file_path), shell=True, capture_output=True)
     prediction = pred_output.stdout.decode().strip()
+    print(prediction)
     file_upload = s3.put_object(Key=filename.split('.')[0] + '.txt',
                       Body=prediction,
                       Bucket=output_bucket)

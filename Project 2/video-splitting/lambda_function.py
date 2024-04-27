@@ -23,18 +23,6 @@ def lambda_handler(event, context):
     if not os.path.exists('/tmp/output'):
         os.makedirs('/tmp/output')
 
-    split_cmd = 'ffmpeg -i ' + video_filename + ' -vframes 1 ' + '/tmp/output/' + outfile
-    try:
-        subprocess.check_call(split_cmd, shell=True)
-    except subprocess.CalledProcessError as e:
-        print(e.returncode)
-        print(e.output)
-
-    #Upload to Stage-1 S3 Bucket
-    dir = os.listdir('/tmp/output/')
-    for file in dir:
-        s3.upload_file('/tmp/output/' + file, stage_1_bucket, outfile)
-
     input = {
         'bucket_name':'1229560048-stage-1',
         'image_file_name': outfile
@@ -48,4 +36,16 @@ def lambda_handler(event, context):
 
     responsePayload = json.load(response['Payload'])
     print(responsePayload)
+    split_cmd = 'ffmpeg -i ' + video_filename + ' -vframes 1 ' + '/tmp/output/' + outfile
+    try:
+        subprocess.check_call(split_cmd, shell=True)
+    except subprocess.CalledProcessError as e:
+        print(e.returncode)
+        print(e.output)
+
+    #Upload to Stage-1 S3 Bucket
+    dir = os.listdir('/tmp/output/')
+    for file in dir:
+        s3.upload_file('/tmp/output/' + file, stage_1_bucket, outfile)
+
     return outfile
