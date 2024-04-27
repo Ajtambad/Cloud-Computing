@@ -20,9 +20,6 @@ def lambda_handler(event, context):
     file = s3.download_file(input_bucket, filename, video_filename) #Download from input S3 bucket
     outfile = os.path.splitext(filename)[0] + ".jpg"
 
-    if not os.path.exists('/tmp/output'):
-        os.makedirs('/tmp/output')
-
     input = {
         'bucket_name':'1229560048-stage-1',
         'image_file_name': outfile
@@ -36,7 +33,7 @@ def lambda_handler(event, context):
 
     responsePayload = json.load(response['Payload'])
     print(responsePayload)
-    split_cmd = 'ffmpeg -i ' + video_filename + ' -vframes 1 ' + '/tmp/output/' + outfile
+    split_cmd = 'ffmpeg -i ' + video_filename + ' -vframes 1 ' + '/tmp/' + outfile
     try:
         subprocess.check_call(split_cmd, shell=True)
     except subprocess.CalledProcessError as e:
