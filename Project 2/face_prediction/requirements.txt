@@ -1,4 +1,5 @@
 boto3
 opencv-python
 requests
+pillow
 
