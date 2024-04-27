@@ -18,7 +18,6 @@ def lambda_handler(event, context):
     filename = video_filename
     video_filename = os.path.join('/tmp', video_filename)
     file = s3.download_file(input_bucket, filename, video_filename) #Download from input S3 bucket
-    filename = os.path.basename(video_filename)
     outfile = os.path.splitext(filename)[0] + ".jpg"
 
     if not os.path.exists('/tmp/output'):
