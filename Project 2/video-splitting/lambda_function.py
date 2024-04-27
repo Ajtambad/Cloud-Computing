@@ -26,6 +26,9 @@ def lambda_handler(event, context):
         print(e.returncode)
         print(e.output)
 
+    #Upload to Stage-1 S3 Bucket
+    s3.upload_file('/tmp/' + outfile, stage_1_bucket, outfile)
+
     input = {
         'bucket_name':'1229560048-stage-1',
         'image_file_name': outfile
@@ -37,8 +40,5 @@ def lambda_handler(event, context):
         Payload = json.dumps(input)
     )
     responsePayload = json.load(response['Payload'])
-
-    #Upload to Stage-1 S3 Bucket
-    s3.upload_file('/tmp/' + outfile, stage_1_bucket, outfile)
 
     return outfile
