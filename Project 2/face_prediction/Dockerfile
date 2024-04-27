@@ -1,65 +1,46 @@
-#__copyright__   = "Copyright 2024, VISA Lab"
-#__license__     = "MIT"
-
-# Define global args
+# Defining global args
 ARG FUNCTION_DIR="/home/app/"
-ARG RUNTIME_VERSION="3"
-ARG DISTRO_VERSION="3.12"
+ARG RUNTIME_VERSION="3.8"
 
-FROM alpine:latest
-FROM python:${RUNTIME_VERSION}-slim AS python-alpine
+# Using a smaller base image
+FROM python:${RUNTIME_VERSION}-slim AS base
 
-#RUN apt-get update \
-#    && apt-get install -y cmake ca-certificates libgl1-mesa-glx
-RUN python${RUNTIME_VERSION} -m pip install --upgrade pip
-
-FROM python-alpine AS build-image
-
-# Include global args in this stage of the build
-ARG FUNCTION_DIR
-ARG RUNTIME_VERSION
-# Create function directory
-RUN mkdir -p ${FUNCTION_DIR}
-
-# Install Lambda Runtime Interface Client for Python
-RUN python${RUNTIME_VERSION} -m pip install awslambdaric --target ${FUNCTION_DIR}
-
-# Stage 3 - final runtime image
-# Grab a fresh copy of the Python image
-FROM python-alpine
-# Include global arg in this stage of the build
-ARG FUNCTION_DIR
 # Set working directory to function root directory
 WORKDIR ${FUNCTION_DIR}
-# Copy in the built dependencies
-COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
-# (Optional) Add Lambda Runtime Interface Emulator and use a script in the ENTRYPOINT for simpler local runs
+
+# Installing Python packages
+RUN python -m pip install --upgrade pip
+
+# Installing Lambda Runtime Interface Client for Python
+RUN pip install awslambdaric
+
+# Installing PyTorch and Torchvision without CUDA
+RUN pip install --no-cache-dir \
+    torch==1.9.0+cpu -f https://download.pytorch.org/whl/torch_stable.html \
+    torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
+# Copying the local facenet_pytorch folder
+COPY facenet_pytorch ${FUNCTION_DIR}/facenet_pytorch
+COPY face-recognition-code .
+
+# Installing facenet_pytorch from the local copy
+RUN pip install --no-cache-dir ./facenet_pytorch
+
+# Copying the requirements file and install additional Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copying function code
+COPY handler.py .
+
+# Adding Lambda Runtime Interface Emulator for simpler local runs
 ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie /usr/bin/aws-lambda-rie
 RUN chmod 755 /usr/bin/aws-lambda-rie
 
-# Install ffmpeg
-RUN apt-get update 
-RUN apt-get install -y ffmpeg
-
-# Copy handler function
-COPY requirements.txt ${FUNCTION_DIR}
-COPY face-recognition-code.py ${FUNCTION_DIR}
-ADD facenet_pytorch "/home/app/facenet_pytorch"
-ADD face_recognition_additional_files "/home/app/face_recognition_additional_files"
-COPY test_03.jpg ${FUNCTION_DIR}
-# COPY ffmpeg ${FUNCTION_DIR}
-# COPY ffmpeg /usr/bin
-
-RUN python${RUNTIME_VERSION} -m pip install -r requirements.txt --target ${FUNCTION_DIR}
-# RUN python${RUNTIME_VERSION} -m pip install opencv-python --target {FUNCTION_DIR}
-RUN python${RUNTIME_VERSION} -m pip install torch torchvision --no-cache-dir --index-url https://download.pytorch.org/whl/cpu --target {FUNCTION_DIR}
-# RUN python${RUNTIME_VERSION} -m pip install Pillow --target ${FUNCTION_DIR}
+# Setting up the entry script
 COPY entry.sh /
+RUN chmod 755 /entry.sh
 
-# Copy function code
-COPY handler.py ${FUNCTION_DIR}
-RUN chmod 777 /entry.sh
-
-# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
-ENTRYPOINT [ "/entry.sh" ]
-CMD [ "handler.handler" ]
+# Setting the CMD to your handler
+ENTRYPOINT ["/entry.sh"]
+CMD ["handler.handler"]

@@ -35,6 +35,3 @@ def handler(event, context):
     # extraction_folder_name = output.stdout.decode().strip()
 
     # s3.upload_file(extraction_folder_name, output_bucket, filename)
-
-if __name__ == "__main__":
-    handler()
