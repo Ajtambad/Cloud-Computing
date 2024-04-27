@@ -12,6 +12,7 @@ def handler(event, context):
 
     stage_1_bucket = event['bucket_name']
     filename = event['image_file_name']
+    print(filename)
     # stage_1_bucket = '1229560048-stage-1'
     # filename = 'test_4.jpg'
     file_path = os.path.join('/tmp', filename)

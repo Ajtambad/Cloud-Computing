@@ -20,7 +20,7 @@ def face_recognition_function(key_path):
     key = os.path.splitext(os.path.basename(key_path))[0].split(".")[0]
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     face, prob = mtcnn(img, return_prob=True, save_path=None)
-    saved_data = torch.load('/tmp/data.pt')  # loading data.pt file
+    saved_data = torch.load('face_recognition_additional_files/tmp/data.pt')  # loading data.pt file
     if face != None:
         emb = resnet(face.unsqueeze(0)).detach()  # detech is to make required gradient false
         embedding_list = saved_data[0]  # getting embedding data
@@ -34,7 +34,6 @@ def face_recognition_function(key_path):
         # Save the result name in a file
         with open("/tmp/" + key + ".txt", 'w+') as f:
             f.write(name_list[idx_min])
-        print(name_list[idx_min])
         return name_list[idx_min]
     else:
         print(f"No face is detected")
