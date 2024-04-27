@@ -5,7 +5,6 @@ import os
 import cv2
 from PIL import Image
 from facenet_pytorch import MTCNN, InceptionResnetV1
-from shutil import rmtree
 import torch
 import sys
 
