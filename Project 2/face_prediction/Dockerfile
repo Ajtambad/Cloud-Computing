@@ -13,6 +13,7 @@ RUN python -m pip install --upgrade pip
 
 # Installing Lambda Runtime Interface Client for Python
 RUN pip install awslambdaric
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 
 # Installing PyTorch and Torchvision without CUDA
 RUN pip install --no-cache-dir \
