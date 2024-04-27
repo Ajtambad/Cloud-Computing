@@ -21,7 +21,7 @@ RUN pip install --no-cache-dir \
 
 # Copying the local facenet_pytorch folder
 COPY facenet_pytorch ${FUNCTION_DIR}/facenet_pytorch
-COPY face-recognition-code .
+COPY face-recognition-code.py .
 
 # Installing facenet_pytorch from the local copy
 RUN pip install --no-cache-dir ./facenet_pytorch
