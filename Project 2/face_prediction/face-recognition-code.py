@@ -1,6 +1,7 @@
 __copyright__   = "Copyright 2024, VISA Lab"
 __license__     = "MIT"
 
+HOME = '/tmp'
 import os
 import cv2
 from PIL import Image

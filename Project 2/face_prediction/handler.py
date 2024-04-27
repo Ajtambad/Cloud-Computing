@@ -18,15 +18,10 @@ def handler(event, context):
     # stage_1_bucket = '1229560048-stage-1'
     # filename = 'test_4.jpg'
     file_path = os.path.join('/tmp/', filename)
-    print(file_path)
     file = s3.download_file(stage_1_bucket, filename, file_path)
     s3.download_file(package_bucket, 'data.pt', '/tmp/data.pt')
-    ls_op = subprocess.run('ls', shell=True, capture_output=True)
-    print(ls_op)
     pred_output = subprocess.run("python3 face-recognition-code.py {}".format(file_path), shell=True, capture_output=True)
-    print(pred_output)
     prediction = pred_output.stdout.decode().strip()
-    print(prediction)
     file_upload = s3.put_object(Key=filename.split('.')[0] + '.txt',
                       Body=prediction,
                       Bucket=output_bucket)
